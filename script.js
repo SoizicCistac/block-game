@@ -49,7 +49,7 @@ if (lives) {
 document.addEventListener("keydown", keyDownHandler, false)
 document.addEventListener("keyup", keyUpHandler, false)
 document.addEventListener("mousemove", mouseMoveHandler, false)
-// document.addEventListener("touchmove", mouseMoveHandler, false)
+document.addEventListener("touchmove", mouseMoveHandler, false)
 
 document.addEventListener("click", startGame, false)
 document.addEventListener("click", restartGame, false)
@@ -105,8 +105,9 @@ function startGame (e) {
 
 function restartGame (e) {
     restartButton.addEventListener("click", () => {
-        document.location.reload()
+        // document.location.reload()
         draw()
+        speedBall-=5
     })
 }
 
@@ -125,7 +126,6 @@ function collisionDetection () {
                 if (score === brickRowCount * brickColumnCount) {
                     alert("YOU WIN, CONGRATULATIONS!")
                     document.location.reload()
-                    speedBall-=5
                 }
                 }
             }
@@ -135,13 +135,13 @@ function collisionDetection () {
 }
 
 function drawScore () {
-    ctx.font = "16px harryFont"
+    ctx.font = "20px harryFont"
     ctx.fillStyle = griffindor
     ctx.fillText(`Score: ${score}`, 8, 20)
 }
 
 function drawLives () {
-    ctx.font = "16px harryFont"
+    ctx.font = "20px harryFont"
     ctx.fillStyle = griffindor
     ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20)
 }
