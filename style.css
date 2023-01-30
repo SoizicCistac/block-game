@@ -1,0 +1,39 @@
+@font-face {
+  font-family: harryFont;
+  src: url(./images/font.ttf);
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  font-family: harryFont;
+}
+
+canvas {
+  background: #eee;
+  display: block;
+  margin: 0 auto;
+  margin-top: 2rem;
+}
+
+h1 {
+  margin: auto;
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 3rem;
+}
+
+.hidden {
+  display: none;
+}
+
+button{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  margin-top: 1rem;
+  padding: 2rem;
+  font-size: 2rem;
+}
