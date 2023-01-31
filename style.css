@@ -1,6 +1,6 @@
 @font-face {
   font-family: harryFont;
-  src: url(./images/font.ttf);
+  src: url(./sources/font.ttf);
 }
 
 * {
@@ -9,23 +9,29 @@
   font-family: harryFont;
 }
 
+body {
+  background-image: url(./sources/peakpx-screen.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+}
+
 canvas {
   background: #eee;
   display: block;
   margin: 0 auto;
   margin-top: 2rem;
+  opacity: 95%;
 }
 
 h1 {
   margin: auto;
   margin-top: 2rem;
   text-align: center;
-  font-size: 3rem;
+  font-size: 4rem;
+  /* color: aliceblue; */
 }
 
-.hidden {
-  display: none;
-}
 
 button{
   display: flex;
@@ -36,4 +42,8 @@ button{
   margin-top: 1rem;
   padding: 2rem;
   font-size: 2rem;
+}
+
+.hidden {
+  display: none;
 }
