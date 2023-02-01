@@ -1,15 +1,14 @@
+// select canvas elements
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext("2d");
 
+// add audio to the game
 const audio = new Audio("./sources/music.mp3");
 
 const startButton = document.getElementById('btnStart')
 const restartButton = document.getElementById('btnRestart')
 
 let frameId = null
-
-// ball size
-const ballRadius = 10
 
 // bricks colors
 let colors = ["#d5d31d", "#091e65", "#a10808", "#104906"]
@@ -25,48 +24,51 @@ let y = canvas.height -30
 let dx = 2
 let dy = -2
 
-// paddle
+// setting up game variables and constants
 const paddleHeight = 10
 const paddleWidth = 75
+const paddleMarginBottom = 30
+const ballRadius = 10
 let paddleX = (canvas.width - paddleWidth) / 2
-
-// moving the paddle
-let rightPressed = false;
-let leftPressed = false;
-
-let speedBall = 15
-
-// score
 let score = 0
-
-// lives
 let lives = 3
-
-if (lives) {
-    restartButton.classList.add('hidden')
-} else {
-    restartButton.classList.remove('hidden')
-    startButton.classList.add('hidden')
-}
-
-// add events for keyboard, mouse and touch control
-document.addEventListener("keydown", keyDownHandler, false)
-document.addEventListener("keyup", keyUpHandler, false)
-document.addEventListener("mousemove", mouseMoveHandler, false)
-document.addEventListener("touchmove", mouseMoveHandler, false)
-
-document.addEventListener("click", startGame, false)
-document.addEventListener("click", restartGame, false)
-
-
-// setting up bricks variables
-const brickRowCount = 3;
-const brickColumnCount = 7;
+let level = 1
+const maxLevel = 7
+const brickRowCount = 5;
+const brickColumnCount = 4;
 const brickWidth = 75;
 const brickHeight = 20;
 const brickPadding = 10;
 const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
+let speedBall = 15
+
+// moving the paddle
+let rightPressed = false;
+let leftPressed = false;
+
+
+
+// add events for keyboard, mouse and touch control
+document.addEventListener("keydown", keyDownHandler, false)
+document.addEventListener("keyup", keyUpHandler, false)
+document.addEventListener("mousemove", mouseMoveHandler, false)
+document.addEventListener("touchstart", mouseMoveHandler, false)
+document.addEventListener("click", startGame, false)
+document.addEventListener("click", restartGame, false)
+
+// Manage sound
+const soundElement = document.getElementById("sound")
+soundElement.addEventListener("click", audioControl);
+function audioControl() {
+    let imgSrc = soundElement.getAttribute("src")
+    let soundImg = imgSrc == "./sources/sound_on.svg" ? "./sources/sound_off.svg" : "./sources/sound_on.svg"
+
+    soundElement.setAttribute("src", soundImg)
+
+    audio.muted = audio.muted ? false : true
+
+}
 
 const bricks = []
 for (let c = 0; c < brickColumnCount; c++) {
@@ -150,16 +152,12 @@ function collisionDetection () {
                     }
 
                     b.status = 0
-                    console.log(bricks)
-                    console.log(bricks.length)
                     bricks[c].splice(r, 1)
-                    console.log(bricks.length)
 
                     const gameIsOver = bricks.every(arr => {
                         return arr.length === 0
                     })
 
-                    console.log(gameIsOver)
                     if(gameIsOver) {
                         cancelAnimationFrame(frameId)
                         ctx.font = "40px harryFont"
@@ -195,7 +193,7 @@ function drawBall () {
 
 function drawPaddle () {
     ctx.beginPath()
-    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight)
+    ctx.rect(paddleX, canvas.height - (paddleHeight + paddleMarginBottom), paddleWidth, paddleHeight)
     ctx.fillStyle= "brown"
     ctx.fill()
     ctx.closePath()
@@ -283,4 +281,6 @@ function nextLevel() {
 // draw()
 
 
+// <i class="fa-solid fa-volume-high"></i>
+// <i class="fa-solid fa-volume-slash"></i>
 

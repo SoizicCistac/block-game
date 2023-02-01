@@ -10,7 +10,7 @@
 }
 
 body {
-  background-image: url(./sources/peakpx-screen.jpeg);
+  background-image: url(./sources/peakpx.jpeg);
   background-repeat: no-repeat;
   background-size: cover;
   height: 100%;
@@ -28,8 +28,7 @@ h1 {
   margin: auto;
   margin-top: 2rem;
   text-align: center;
-  font-size: 4rem;
-  /* color: aliceblue; */
+  font-size: 3rem;
 }
 
 
@@ -40,10 +39,40 @@ button{
   align-items: center;
   margin: auto;
   margin-top: 1rem;
-  padding: 2rem;
+  margin-bottom: 3rem;
+  padding: 1rem 2rem;
   font-size: 2rem;
 }
 
 .hidden {
   display: none;
+}
+
+.sound {
+  width: 1.5rem;
+  height: 1.5rem;
+  cursor: pointer;
+  margin: 0 auto; 
+  margin-top: 0.5rem;
+}
+
+@media screen and (min-width : 768px) {
+  body {
+    background-image: url(./sources/peakpx-tablet.jpeg);
+  }
+
+  h1 {
+    font-size: 4rem;
+  }
+
+}
+
+@media screen and (min-width : 1024px) {
+  body {
+    background-image: url(./sources/peakpx-screen.jpeg);
+  }
+
+  h1 {
+    font-size: 5rem;
+  }
 }
