@@ -27,7 +27,6 @@ let dy = -2
 // setting up game variables and constants
 const paddleHeight = 10
 const paddleWidth = 75
-const paddleMarginBottom = 30
 const ballRadius = 10
 let paddleX = (canvas.width - paddleWidth) / 2
 let score = 0
@@ -43,19 +42,23 @@ const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
 let speedBall = 15
 
+if (lives > 0) {
+    restartButton.classList.add('hidden')
+} else {
+    restartButton.classList.remove('hidden')
+    startButton.classList.add('hidden')
+}
+
 // moving the paddle
 let rightPressed = false;
 let leftPressed = false;
-
-
 
 // add events for keyboard, mouse and touch control
 document.addEventListener("keydown", keyDownHandler, false)
 document.addEventListener("keyup", keyUpHandler, false)
 document.addEventListener("mousemove", mouseMoveHandler, false)
-document.addEventListener("touchstart", mouseMoveHandler, false)
+document.addEventListener("touchmove", mouseMoveHandler, false)
 document.addEventListener("click", startGame, false)
-document.addEventListener("click", restartGame, false)
 
 // Manage sound
 const soundElement = document.getElementById("sound")
@@ -70,12 +73,12 @@ function audioControl() {
 
 }
 
+// create bricks
 const bricks = []
 for (let c = 0; c < brickColumnCount; c++) {
     bricks[c] = []
     for (let r = 0; r < brickRowCount; r++) {
         bricks[c][r] = { x: 0, y: 0, status: Math.floor(Math.random() * 4) + 1 }
-        // bricks[c][r] = { x: 0, y: 0, status: 4}
     }
 }
 
@@ -111,13 +114,9 @@ function startGame (e) {
     })
 }
 
-function restartGame (e) {
-    restartButton.addEventListener("click", () => {
-        // document.location.reload()
-        draw()
-        speedBall-=5
+restartButton.addEventListener("click", () => {
+        location.reload()
     })
-}
 
 function collisionDetection () {
     for (let c = 0; c < brickColumnCount; c++){
@@ -193,7 +192,7 @@ function drawBall () {
 
 function drawPaddle () {
     ctx.beginPath()
-    ctx.rect(paddleX, canvas.height - (paddleHeight + paddleMarginBottom), paddleWidth, paddleHeight)
+    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight)
     ctx.fillStyle= "brown"
     ctx.fill()
     ctx.closePath()
