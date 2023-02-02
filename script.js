@@ -5,6 +5,9 @@ const ctx = canvas.getContext("2d");
 // add audio to the game
 const audio = new Audio("./sources/music.mp3");
 
+const winImage = new Image()
+winImage.src = "./sources/win.png"
+
 const startButton = document.getElementById('btnStart')
 const restartButton = document.getElementById('btnRestart')
 
@@ -21,8 +24,8 @@ let goldenSnatch = "#eac102"
 // movement of the ball
 let x = canvas.width / 2
 let y = canvas.height -30
-let dx = 2
-let dy = -2
+let dx = 3 * (Math.random() *2 - 1)
+let dy = -3
 
 // setting up game variables and constants
 const paddleHeight = 10
@@ -30,17 +33,19 @@ const paddleWidth = 75
 const ballRadius = 10
 let paddleX = (canvas.width - paddleWidth) / 2
 let score = 0
-let lives = 3
+let lives = 5
 let level = 1
 const maxLevel = 7
-const brickRowCount = 5;
+let levelMaxAchieved = false
+let brickRowCount = 3;
 const brickColumnCount = 4;
 const brickWidth = 75;
 const brickHeight = 20;
 const brickPadding = 10;
 const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
-let speedBall = 15
+let speedBall = 20
+let isLevelDone = true
 
 if (lives > 0) {
     restartButton.classList.add('hidden')
@@ -74,12 +79,16 @@ function audioControl() {
 }
 
 // create bricks
-const bricks = []
-for (let c = 0; c < brickColumnCount; c++) {
-    bricks[c] = []
-    for (let r = 0; r < brickRowCount; r++) {
-        bricks[c][r] = { x: 0, y: 0, status: Math.floor(Math.random() * 4) + 1 }
-    }
+let bricks = []
+
+function createBricks() {
+    bricks = []
+    for (let c = 0; c < brickColumnCount; c++) {
+        bricks[c] = []
+        for (let r = 0; r < brickRowCount; r++) {
+            bricks[c][r] = { x: 0, y: 0, status: Math.floor(Math.random() * 4) +1 }
+        }
+    }  
 }
 
 function keyDownHandler (e) {
@@ -107,6 +116,7 @@ function mouseMoveHandler (e) {
 
 function startGame (e) {
     startButton.addEventListener("click", () => {
+        createBricks()
         draw()
         audio.play();
         restartButton.classList.remove('hidden')
@@ -131,8 +141,8 @@ function collisionDetection () {
                 }
                 const brick = {
                     right: b.x + brickWidth + brickPadding,
-                    left: b.x -brickPadding,
-                    top: b.y -brickPadding,
+                    left: b.x - brickPadding,
+                    top: b.y - brickPadding,
                     bottom: b.y + brickHeight + brickPadding
                 }
                 const isInX = ball.right > brick.left && ball.left < brick.right
@@ -153,16 +163,30 @@ function collisionDetection () {
                     b.status = 0
                     bricks[c].splice(r, 1)
 
-                    const gameIsOver = bricks.every(arr => {
+                    const levelFinished = bricks.every(arr => {
                         return arr.length === 0
                     })
 
-                    if(gameIsOver) {
-                        cancelAnimationFrame(frameId)
-                        ctx.font = "40px harryFont"
-                        ctx.fillStyle = ravenclaw
-                        ctx.fillText("YOU WIN", canvas.width / 2 - 100, canvas.height / 2)
-                        nextLevel()
+                    console.log(levelFinished)
+
+                    if(levelFinished) {
+                        console.log(level)
+                        if(level >= maxLevel){
+                            cancelAnimationFrame(frameId)
+                            levelMaxAchieved = true
+                            gameFinished()
+                            return
+                        } 
+                        brickRowCount++
+                        createBricks()
+                        level++
+                        speedBall+=0.5
+                        x = canvas.width / 2;
+                        y = canvas.height - 30;
+                        dx = 3 * (Math.random() *2 - 1)
+                        dy = -3
+                        paddleX = (canvas.width - paddleWidth) / 2
+                        draw()
                     }
                 }
             }
@@ -170,10 +194,22 @@ function collisionDetection () {
     }
 }
 
+function gameFinished() {
+    ctx.font = "40px harryFont"
+    ctx.fillStyle = ravenclaw
+    ctx.fillText("YOU WIN!", 120, 300)
+    ctx.drawImage(winImage, 140, 80, 118, 175)
+}
 function drawScore () {
     ctx.font = "20px harryFont"
     ctx.fillStyle = griffindor
     ctx.fillText(`Score: ${score}`, 8, 20)
+}
+
+function drawLevel () {
+    ctx.font = "20px harryFont"
+    ctx.fillStyle = griffindor
+    ctx.fillText(`Level: ${level}`, canvas.width/2-25, 20)
 }
 
 function drawLives () {
@@ -228,20 +264,29 @@ function draw () {
     drawBall()
     drawPaddle()
     drawScore()
+    drawLevel()
     drawLives()
     collisionDetection()
     x += dx;
     y += dy;
     if (y + dy < ballRadius) {
         dy = -dy;
-    } else if (y + dy > canvas.height - ballRadius) {
+    } else if (y + dy > canvas.height - paddleHeight - ballRadius) {
         if(x  > paddleX && x < paddleX + paddleWidth) {
-            dy = -dy;
+            let collidePoint = x - (paddleX + paddleWidth/2);
+            // normalize the values
+            collidePoint = collidePoint/ (paddleWidth/2);
+            // calculate the angle
+            let angle = collidePoint * Math.PI/3
+
+            dx = (speedBall/5) * Math.sin(angle);
+            dy = - (speedBall/5) * Math.cos(angle);
         } else {
             lives--;
             if (lives === 0) {
+                cancelAnimationFrame(frameId)
                 gameOver()
-                setIntervals(document.location.reload(), 3000)
+                return
             } else {
                 x = canvas.width / 2;
                 y = canvas.height - 30;
@@ -249,7 +294,6 @@ function draw () {
                 dy = -2
                 paddleX = (canvas.width - paddleWidth) / 2
             }
-            
         } 
     }
     
@@ -266,20 +310,8 @@ function draw () {
         }
     }
 
-    frameId = requestAnimationFrame(draw)
-}
-
-function nextLevel() {
-    if (brickRowCount < 10) {
-        brickRowCount++
-        speedBall+=5
-        draw()
+    if(!levelMaxAchieved){
+        frameId = requestAnimationFrame(draw)
     }
     
 }
-// draw()
-
-
-// <i class="fa-solid fa-volume-high"></i>
-// <i class="fa-solid fa-volume-slash"></i>
-
