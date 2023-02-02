@@ -2,6 +2,8 @@
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext("2d");
 
+// ctx.globalAlpha = 1
+
 // add audio to the game
 const audio = new Audio("./sources/music.mp3");
 
@@ -33,7 +35,7 @@ const paddleWidth = 75
 const ballRadius = 10
 let paddleX = (canvas.width - paddleWidth) / 2
 let score = 0
-let lives = 5
+let lives = 3
 let level = 1
 const maxLevel = 7
 let levelMaxAchieved = false
@@ -46,6 +48,7 @@ const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
 let speedBall = 20
 let isLevelDone = true
+const ongoingTouches = []
 
 if (lives > 0) {
     restartButton.classList.add('hidden')
@@ -62,7 +65,7 @@ let leftPressed = false;
 document.addEventListener("keydown", keyDownHandler, false)
 document.addEventListener("keyup", keyUpHandler, false)
 document.addEventListener("mousemove", mouseMoveHandler, false)
-document.addEventListener("touchmove", mouseMoveHandler, false)
+document.addEventListener("touchmove", touchMoveHandler, false)
 document.addEventListener("click", startGame, false)
 
 // Manage sound
@@ -75,7 +78,6 @@ function audioControl() {
     soundElement.setAttribute("src", soundImg)
 
     audio.muted = audio.muted ? false : true
-
 }
 
 // create bricks
@@ -113,6 +115,14 @@ function mouseMoveHandler (e) {
         paddleX = relativeX - paddleWidth / 2
     }
 }
+
+function touchMoveHandler(e){
+    const relativeX = e.clientX - canvas.offsetLeft
+    if (relativeX > 0 && relativeX < canvas.width) {
+        paddleX = relativeX - paddleWidth / 2
+    }
+}
+
 
 function startGame (e) {
     startButton.addEventListener("click", () => {
@@ -180,7 +190,7 @@ function collisionDetection () {
                         brickRowCount++
                         createBricks()
                         level++
-                        speedBall+=0.5
+                        speedBall -= 2
                         x = canvas.width / 2;
                         y = canvas.height - 30;
                         dx = 3 * (Math.random() *2 - 1)
@@ -283,7 +293,7 @@ function draw () {
             dy = - (speedBall/5) * Math.cos(angle);
         } else {
             lives--;
-            if (lives === 0) {
+            if (lives <= 0) {
                 cancelAnimationFrame(frameId)
                 gameOver()
                 return
