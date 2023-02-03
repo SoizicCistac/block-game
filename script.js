@@ -2,8 +2,6 @@
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext("2d");
 
-// ctx.globalAlpha = 1
-
 // add audio to the game
 const audio = new Audio("./sources/music.mp3");
 
@@ -48,7 +46,6 @@ const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
 let speedBall = 20
 let isLevelDone = true
-const ongoingTouches = []
 
 if (lives > 0) {
     restartButton.classList.add('hidden')
@@ -177,8 +174,6 @@ function collisionDetection () {
                         return arr.length === 0
                     })
 
-                    console.log(levelFinished)
-
                     if(levelFinished) {
                         console.log(level)
                         if(level >= maxLevel){
@@ -190,7 +185,7 @@ function collisionDetection () {
                         brickRowCount++
                         createBricks()
                         level++
-                        speedBall -= 2
+                        speedBall = 20
                         x = canvas.width / 2;
                         y = canvas.height - 30;
                         dx = 3 * (Math.random() *2 - 1)
